@@ -8,12 +8,29 @@ from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.throttling import ScopedRateThrottle, AnonRateThrottle
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 from watchlist_app.api.permissions import IsAdminOrReadOnly, IsReviewUserOrReadOnly
 from watchlist_app.models import WatchList, StreamPlatform, Reviews
 from watchlist_app.api.serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
 from watchlist_app.api.throttling import ReviewCreateThrottle, ReviewListThrottle
 
+
+
+
+class UserReview(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+    # throttle_classes = [ReviewListThrottle]
+
+    # def get_queryset(self):
+    #     username = self.kwargs.get('username')
+    #     return Reviews.objects.filter(review_user__username=username)
+    
+    def get_queryset(self):
+            username = self.request.query_params.get('username', None)  
+            return Reviews.objects.filter(review_user__username=username)
+        
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
@@ -48,6 +65,8 @@ class ReviewList(generics.ListCreateAPIView):
     serializer_class = ReviewSerializer
     # permission_classes = [IsAuthenticated] # The request is authenticated as a user, or is a read-only request.
     throttle_classes = [ReviewListThrottle]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['review_user__username', 'active']
 
     def get_queryset(self):
         pk = self.kwargs['pk'] 
@@ -151,7 +170,14 @@ class StreamPlatformDetailAV(APIView):
         movie.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+
+class WatchListGV(generics.ListAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
+    filter_backends = [OrderingFilter]
+    ordering_fields = ['avg_rating']
     
+
 class WatchListAV(APIView):
     permission_classes = [IsAdminOrReadOnly]
     throttle_classes = [AnonRateThrottle]

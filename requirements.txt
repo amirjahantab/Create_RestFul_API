@@ -1,7 +1,11 @@
-asgiref==3.3.1
-Django==3.2a1
+asgiref==3.7.2
+Django==5.0
+django-filter==23.5
 djangorestframework==3.14.0
+djangorestframework-simplejwt==5.2.2
 pycodestyle==2.11.1
+PyJWT==2.8.0
 pytz==2021.1
 sqlparse==0.4.1
 tomli==2.0.1
+typing_extensions==4.9.0

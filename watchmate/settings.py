@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'watchlist_app',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -146,13 +147,15 @@ REST_FRAMEWORK = {
     ],
 
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '3/day',
-        'user': '3/day',
-        'review-create': '2/day',
-        'review-list': '3/day',
-        'review-detail': '3/day',
+        'anon': '100/day',
+        'user': '100/day',
+        'review-create': '100/day',
+        'review-list': '100/day',
+        'review-detail': '100/day',
     },
-
+    
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     # 'PAGE_SIZE': 5,
 
